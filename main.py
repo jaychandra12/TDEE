@@ -96,6 +96,10 @@ maintenance_calories = calculate_calories(weight, height, age, gender, activity,
 weight_loss_calories = calculate_calories(weight, height, age, gender, activity, "Weight Loss")
 weight_gain_calories = calculate_calories(weight, height, age, gender, activity, "Weight Gain")
 
+# Calculate expected weight changes
+weekly_weight_loss = round((maintenance_calories - weight_loss_calories) * 7 / 7700, 2)  # 7700 calories = 1kg of fat
+weekly_weight_gain = round((weight_gain_calories - maintenance_calories) * 7 / 7700, 2)
+
 # Display all calorie recommendations
 st.header("Calorie Recommendations")
 st.markdown("""
@@ -104,6 +108,11 @@ st.markdown("""
         padding: 20px;
         border-radius: 5px;
         margin: 10px 0;
+    }
+    .weight-change {
+        color: #666;
+        font-style: italic;
+        margin-top: 5px;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -117,6 +126,7 @@ with col1:
         </div>
     """, unsafe_allow_html=True)
     st.metric("Daily Calories", f"{weight_loss_calories:,.0f} kcal")
+    st.markdown(f'<p class="weight-change">Expected loss: {weekly_weight_loss} kg/week</p>', unsafe_allow_html=True)
     loss_macros = calculate_macros(weight_loss_calories, "Weight Loss")
     st.markdown(f"""
         - Protein: {loss_macros['protein']}g
@@ -145,6 +155,7 @@ with col3:
         </div>
     """, unsafe_allow_html=True)
     st.metric("Daily Calories", f"{weight_gain_calories:,.0f} kcal")
+    st.markdown(f'<p class="weight-change">Expected gain: {weekly_weight_gain} kg/week</p>', unsafe_allow_html=True)
     gain_macros = calculate_macros(weight_gain_calories, "Weight Gain")
     st.markdown(f"""
         - Protein: {gain_macros['protein']}g
@@ -160,7 +171,17 @@ st.markdown("""
 - **Weight Gain**: 20% calorie surplus with higher carbs for muscle gain
 """)
 
-# Create macro distribution pie chart (using original goal's calories)
+# Create macro distribution pie chart based on selected goal
+if goal == "Weight Loss":
+    macros = loss_macros
+    daily_calories = weight_loss_calories
+elif goal == "Weight Gain":
+    macros = gain_macros
+    daily_calories = weight_gain_calories
+else:
+    macros = maintenance_macros
+    daily_calories = maintenance_calories
+
 fig = go.Figure(data=[go.Pie(
     labels=['Protein', 'Carbs', 'Fats'],
     values=[macros['protein'] * 4, macros['carbs'] * 4, macros['fats'] * 9],

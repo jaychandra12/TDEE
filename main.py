@@ -91,19 +91,76 @@ with col1:
     st.metric("Your BMI", f"{bmi:.1f}")
     st.markdown(f"<p style='color:{bmi_color}'><strong>Category: {bmi_category}</strong></p>", unsafe_allow_html=True)
 
-# Calculate and display calorie needs
-daily_calories = calculate_calories(weight, height, age, gender, activity, goal)
-with col2:
-    st.metric("Daily Calories", f"{daily_calories:,.0f} kcal")
-    
-# Calculate and display macros
-macros = calculate_macros(daily_calories, goal)
-with col3:
-    st.metric("Protein", f"{macros['protein']}g")
-    st.metric("Carbs", f"{macros['carbs']}g")
-    st.metric("Fats", f"{macros['fats']}g")
+# Calculate calories for all goals
+maintenance_calories = calculate_calories(weight, height, age, gender, activity, "Maintenance")
+weight_loss_calories = calculate_calories(weight, height, age, gender, activity, "Weight Loss")
+weight_gain_calories = calculate_calories(weight, height, age, gender, activity, "Weight Gain")
 
-# Create macro distribution pie chart
+# Display all calorie recommendations
+st.header("Calorie Recommendations")
+st.markdown("""
+<style>
+    .calorie-box {
+        padding: 20px;
+        border-radius: 5px;
+        margin: 10px 0;
+    }
+</style>
+""", unsafe_allow_html=True)
+
+col1, col2, col3 = st.columns(3)
+
+with col1:
+    st.markdown("""
+        <div class="calorie-box" style="background-color: #FFE0E0;">
+        <h3>Weight Loss</h3>
+        </div>
+    """, unsafe_allow_html=True)
+    st.metric("Daily Calories", f"{weight_loss_calories:,.0f} kcal")
+    loss_macros = calculate_macros(weight_loss_calories, "Weight Loss")
+    st.markdown(f"""
+        - Protein: {loss_macros['protein']}g
+        - Carbs: {loss_macros['carbs']}g
+        - Fats: {loss_macros['fats']}g
+    """)
+
+with col2:
+    st.markdown("""
+        <div class="calorie-box" style="background-color: #E0FFE0;">
+        <h3>Maintenance</h3>
+        </div>
+    """, unsafe_allow_html=True)
+    st.metric("Daily Calories", f"{maintenance_calories:,.0f} kcal")
+    maintenance_macros = calculate_macros(maintenance_calories, "Maintenance")
+    st.markdown(f"""
+        - Protein: {maintenance_macros['protein']}g
+        - Carbs: {maintenance_macros['carbs']}g
+        - Fats: {maintenance_macros['fats']}g
+    """)
+
+with col3:
+    st.markdown("""
+        <div class="calorie-box" style="background-color: #E0E0FF;">
+        <h3>Weight Gain</h3>
+        </div>
+    """, unsafe_allow_html=True)
+    st.metric("Daily Calories", f"{weight_gain_calories:,.0f} kcal")
+    gain_macros = calculate_macros(weight_gain_calories, "Weight Gain")
+    st.markdown(f"""
+        - Protein: {gain_macros['protein']}g
+        - Carbs: {gain_macros['carbs']}g
+        - Fats: {gain_macros['fats']}g
+    """)
+
+# Add explanations for each goal
+st.markdown("""
+### Goal Explanations
+- **Weight Loss**: 20% calorie deficit with higher protein to preserve muscle mass
+- **Maintenance**: Balanced macronutrient distribution to maintain current weight
+- **Weight Gain**: 20% calorie surplus with higher carbs for muscle gain
+""")
+
+# Create macro distribution pie chart (using original goal's calories)
 fig = go.Figure(data=[go.Pie(
     labels=['Protein', 'Carbs', 'Fats'],
     values=[macros['protein'] * 4, macros['carbs'] * 4, macros['fats'] * 9],

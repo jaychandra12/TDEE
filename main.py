@@ -16,7 +16,7 @@ st.set_page_config(
 )
 
 # Title and introduction
-st.title("🏋️ BMI & Nutrition Calculator")
+st.markdown("<h1 class='main-title'>🏋️ BMI & Nutrition Calculator</h1>", unsafe_allow_html=True)
 st.markdown("""
     Calculate your BMI, get personalized calorie recommendations, and learn about 
     optimal macro distributions based on your goals.

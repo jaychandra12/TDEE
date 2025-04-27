@@ -1,7 +1,6 @@
 "use client"
 
 import type React from "react"
-
 import { useState, useRef } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -24,18 +23,24 @@ export default function Contact() {
     try {
       const formData = new FormData(e.currentTarget)
 
-      // FormSubmit.co endpoint - replace your.email@example.com with your actual email
-      const response = await fetch("https://formsubmit.co/jayachandragundeboina@gmail.com", {
+      // Convert FormData to JSON
+      const formJson = Object.fromEntries(formData.entries())
+
+      // Send the form data to Static Forms
+      const response = await fetch("https://api.staticforms.xyz/submit", {
         method: "POST",
-        body: formData,
+        body: JSON.stringify({
+          ...formJson,
+          accessKey: "030f3ea2-5694-41a0-aa43-383d22f8f2d0", // Replace with your Static Forms access key
+        }),
         headers: {
-          Accept: "application/json",
+          "Content-Type": "application/json",
         },
       })
 
       const data = await response.json()
 
-      if (response.ok) {
+      if (data.success) {
         setFormStatus("success")
         toast({
           title: "Message sent!",
@@ -89,19 +94,15 @@ export default function Contact() {
                   </Button>
                 </div>
               ) : (
-                <form
-                  ref={formRef}
-                  onSubmit={handleSubmit}
-                  className="space-y-6"
-                  action="https://formsubmit.co/jayachandragundeboina@gmail.com"
-                  method="POST"
-                >
-                  {/* FormSubmit configuration fields */}
-                  <input type="hidden" name="_captcha" value="false" />
-                  <input type="hidden" name="_next" value={window.location.href} />
-                  <input type="hidden" name="_subject" value="New contact form submission" />
-                  <input type="text" name="_honey" style={{ display: "none" }} />
-                  <input type="hidden" name="_template" value="table" />
+                <form ref={formRef} onSubmit={handleSubmit} className="space-y-6">
+                  {/* Honeypot field to prevent spam */}
+                  <input type="text" name="honeypot" style={{ display: "none" }} />
+
+                  {/* Reply-to field */}
+                  <input type="hidden" name="replyTo" value="@" />
+
+                  {/* Redirect URL after submission */}
+                  <input type="hidden" name="redirectTo" value={window.location.href} />
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>

@@ -2,57 +2,91 @@
 
 import type React from "react"
 
-import { useState, useRef } from "react"
+import { useState, useRef, useEffect } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
 import { MailIcon, PhoneIcon, GithubIcon, LinkedinIcon, SendIcon, MapPinIcon, CheckCircleIcon } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
+import emailjs from "@emailjs/browser"
 
 export default function Contact() {
   const { toast } = useToast()
   const formRef = useRef<HTMLFormElement>(null)
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    subject: "",
+    message: "",
+  })
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [formStatus, setFormStatus] = useState<"idle" | "submitting" | "success" | "error">("idle")
+  const [emailJSLoaded, setEmailJSLoaded] = useState(false)
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  // Initialize EmailJS
+  useEffect(() => {
+    // Initialize EmailJS with your public key
+    emailjs.init("YOUR_PUBLIC_KEY") // Replace with your EmailJS public key
+    setEmailJSLoaded(true)
+  }, [])
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target
+    setFormData((prev) => ({ ...prev, [name]: value }))
+  }
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+
+    if (!emailJSLoaded) {
+      toast({
+        title: "Service not ready",
+        description: "Please try again in a moment.",
+        variant: "destructive",
+      })
+      return
+    }
+
     setIsSubmitting(true)
     setFormStatus("submitting")
 
     try {
-      const formData = new FormData(e.currentTarget)
-
-      // FormSubmit.co endpoint - replace your.email@example.com with your actual email
-      const response = await fetch("https://formsubmit.co/jayachandragundeboina@gmail.com", {
-        method: "POST",
-        body: formData,
-        headers: {
-          Accept: "application/json",
+      // Send email using EmailJS
+      const result = await emailjs.send(
+        "YOUR_SERVICE_ID", // Replace with your EmailJS service ID
+        "YOUR_TEMPLATE_ID", // Replace with your EmailJS template ID
+        {
+          from_name: formData.name,
+          from_email: formData.email,
+          subject: formData.subject,
+          message: formData.message,
         },
-      })
+      )
 
-      const data = await response.json()
-
-      if (response.ok) {
+      if (result.text === "OK") {
         setFormStatus("success")
         toast({
           title: "Message sent!",
           description: "Thank you for reaching out. I'll get back to you soon.",
         })
 
-        // Reset the form
-        formRef.current?.reset()
+        // Reset form
+        setFormData({
+          name: "",
+          email: "",
+          subject: "",
+          message: "",
+        })
       } else {
-        throw new Error(data.message || "Failed to send message")
+        throw new Error("Failed to send email")
       }
     } catch (error) {
-      console.error("Error sending message:", error)
+      console.error("Error sending email:", error)
       setFormStatus("error")
       toast({
         title: "Error sending message",
-        description: error instanceof Error ? error.message : "Something went wrong. Please try again later.",
+        description: "Something went wrong. Please try again later.",
         variant: "destructive",
       })
     } finally {
@@ -89,25 +123,14 @@ export default function Contact() {
                   </Button>
                 </div>
               ) : (
-                <form
-                  ref={formRef}
-                  onSubmit={handleSubmit}
-                  className="space-y-6"
-                  action="https://formsubmit.co/jayachandragundeboina@gmail.com"
-                  method="POST"
-                >
-                  {/* FormSubmit configuration fields */}
-                  <input type="hidden" name="_captcha" value="false" />
-                  <input type="hidden" name="_next" value={window.location.href} />
-                  <input type="hidden" name="_subject" value="New contact form submission" />
-                  <input type="text" name="_honey" style={{ display: "none" }} />
-                  <input type="hidden" name="_template" value="table" />
-
+                <form ref={formRef} onSubmit={handleSubmit} className="space-y-6">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <Input
                         name="name"
                         placeholder="Your Name"
+                        value={formData.name}
+                        onChange={handleChange}
                         required
                         className="contact-input"
                         disabled={isSubmitting}
@@ -118,6 +141,8 @@ export default function Contact() {
                         name="email"
                         type="email"
                         placeholder="Your Email"
+                        value={formData.email}
+                        onChange={handleChange}
                         required
                         className="contact-input"
                         disabled={isSubmitting}
@@ -128,6 +153,8 @@ export default function Contact() {
                     <Input
                       name="subject"
                       placeholder="Subject"
+                      value={formData.subject}
+                      onChange={handleChange}
                       required
                       className="contact-input"
                       disabled={isSubmitting}
@@ -137,6 +164,8 @@ export default function Contact() {
                     <Textarea
                       name="message"
                       placeholder="Your Message"
+                      value={formData.message}
+                      onChange={handleChange}
                       required
                       className="min-h-[120px] contact-input resize-none"
                       disabled={isSubmitting}

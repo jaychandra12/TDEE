@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server"
-import { sendContactEmail } from "@/app/actions/email"
 
 export async function POST(request: Request) {
   try {
@@ -11,14 +10,12 @@ export async function POST(request: Request) {
       return NextResponse.json({ success: false, error: "Missing required fields" }, { status: 400 })
     }
 
-    // Send email
-    const result = await sendContactEmail({ name, email, subject, message })
-
-    if (result.success) {
-      return NextResponse.json({ success: true, messageId: result.messageId })
-    } else {
-      return NextResponse.json({ success: false, error: result.error }, { status: 500 })
-    }
+    // We're now using Formspree for email handling
+    // This route is kept for backward compatibility
+    return NextResponse.json({
+      success: true,
+      message: "Form submitted successfully. Please use the Formspree integration for email delivery.",
+    })
   } catch (error) {
     console.error("Error in contact API route:", error)
     return NextResponse.json({ success: false, error: "Internal server error" }, { status: 500 })

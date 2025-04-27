@@ -1,7 +1,6 @@
 "use client"
 
 import type React from "react"
-
 import { useState, useRef } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -24,16 +23,15 @@ export default function Contact() {
     try {
       const formData = new FormData(e.currentTarget)
 
-      // FormSubmit.co endpoint - replace your.email@example.com with your actual email
-      const response = await fetch("https://formsubmit.co/jayachandragundeboina@gmail.com", {
+      // Send the form data to Getform.io
+      const response = await fetch("https://getform.io/f/YOUR-FORM-ID", {
+        // Replace with your Getform form ID
         method: "POST",
         body: formData,
         headers: {
           Accept: "application/json",
         },
       })
-
-      const data = await response.json()
 
       if (response.ok) {
         setFormStatus("success")
@@ -45,7 +43,7 @@ export default function Contact() {
         // Reset the form
         formRef.current?.reset()
       } else {
-        throw new Error(data.message || "Failed to send message")
+        throw new Error("Failed to send message")
       }
     } catch (error) {
       console.error("Error sending message:", error)
@@ -89,20 +87,7 @@ export default function Contact() {
                   </Button>
                 </div>
               ) : (
-                <form
-                  ref={formRef}
-                  onSubmit={handleSubmit}
-                  className="space-y-6"
-                  action="https://formsubmit.co/jayachandragundeboina@gmail.com"
-                  method="POST"
-                >
-                  {/* FormSubmit configuration fields */}
-                  <input type="hidden" name="_captcha" value="false" />
-                  <input type="hidden" name="_next" value={window.location.href} />
-                  <input type="hidden" name="_subject" value="New contact form submission" />
-                  <input type="text" name="_honey" style={{ display: "none" }} />
-                  <input type="hidden" name="_template" value="table" />
-
+                <form ref={formRef} onSubmit={handleSubmit} className="space-y-6">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <Input

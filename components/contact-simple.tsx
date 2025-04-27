@@ -1,63 +1,26 @@
 "use client"
 
-import type React from "react"
-
-import { useState, useRef } from "react"
+import { useState } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
 import { MailIcon, PhoneIcon, GithubIcon, LinkedinIcon, SendIcon, MapPinIcon, CheckCircleIcon } from "lucide-react"
-import { useToast } from "@/hooks/use-toast"
 
 export default function Contact() {
-  const { toast } = useToast()
-  const formRef = useRef<HTMLFormElement>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [formStatus, setFormStatus] = useState<"idle" | "submitting" | "success" | "error">("idle")
+  const [formStatus, setFormStatus] = useState<"idle" | "success">("idle")
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
+  // This function only handles the UI state
+  // The actual form submission is handled by the browser's native form submission
+  const handleSubmit = () => {
     setIsSubmitting(true)
-    setFormStatus("submitting")
-
-    try {
-      const formData = new FormData(e.currentTarget)
-
-      // FormSubmit.co endpoint - replace your.email@example.com with your actual email
-      const response = await fetch("https://formsubmit.co/jayachandragundeboina@gmail.com", {
-        method: "POST",
-        body: formData,
-        headers: {
-          Accept: "application/json",
-        },
-      })
-
-      const data = await response.json()
-
-      if (response.ok) {
-        setFormStatus("success")
-        toast({
-          title: "Message sent!",
-          description: "Thank you for reaching out. I'll get back to you soon.",
-        })
-
-        // Reset the form
-        formRef.current?.reset()
-      } else {
-        throw new Error(data.message || "Failed to send message")
-      }
-    } catch (error) {
-      console.error("Error sending message:", error)
-      setFormStatus("error")
-      toast({
-        title: "Error sending message",
-        description: error instanceof Error ? error.message : "Something went wrong. Please try again later.",
-        variant: "destructive",
-      })
-    } finally {
+    // We'll set a timeout to simulate the form submission
+    // In reality, the page will navigate away to FormSubmit and then back
+    setTimeout(() => {
       setIsSubmitting(false)
-    }
+    }, 2000)
+    return true
   }
 
   return (
@@ -90,18 +53,19 @@ export default function Contact() {
                 </div>
               ) : (
                 <form
-                  ref={formRef}
-                  onSubmit={handleSubmit}
-                  className="space-y-6"
                   action="https://formsubmit.co/jayachandragundeboina@gmail.com"
                   method="POST"
+                  onSubmit={handleSubmit}
+                  className="space-y-6"
                 >
                   {/* FormSubmit configuration fields */}
                   <input type="hidden" name="_captcha" value="false" />
-                  <input type="hidden" name="_next" value={window.location.href} />
                   <input type="hidden" name="_subject" value="New contact form submission" />
                   <input type="text" name="_honey" style={{ display: "none" }} />
                   <input type="hidden" name="_template" value="table" />
+
+                  {/* This will redirect back to your site after submission */}
+                  <input type="hidden" name="_next" value={typeof window !== "undefined" ? window.location.href : ""} />
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>

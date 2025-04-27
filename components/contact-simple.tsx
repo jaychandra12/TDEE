@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
@@ -10,13 +10,17 @@ import { MailIcon, PhoneIcon, GithubIcon, LinkedinIcon, SendIcon, MapPinIcon, Ch
 export default function Contact() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [formStatus, setFormStatus] = useState<"idle" | "success">("idle")
+  const [currentUrl, setCurrentUrl] = useState<string>("")
+
+  // Set the current URL after component mounts (client-side only)
+  useEffect(() => {
+    setCurrentUrl(window.location.href)
+  }, [])
 
   // This function only handles the UI state
-  // The actual form submission is handled by the browser's native form submission
   const handleSubmit = () => {
     setIsSubmitting(true)
     // We'll set a timeout to simulate the form submission
-    // In reality, the page will navigate away to FormSubmit and then back
     setTimeout(() => {
       setIsSubmitting(false)
     }, 2000)
@@ -64,8 +68,8 @@ export default function Contact() {
                   <input type="text" name="_honey" style={{ display: "none" }} />
                   <input type="hidden" name="_template" value="table" />
 
-                  {/* This will redirect back to your site after submission */}
-                  <input type="hidden" name="_next" value={typeof window !== "undefined" ? window.location.href : ""} />
+                  {/* Only add the _next field if we have a currentUrl (client-side) */}
+                  {currentUrl && <input type="hidden" name="_next" value={currentUrl} />}
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>

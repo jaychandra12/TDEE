@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useState, useRef } from "react"
+import { useState, useRef, useEffect } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
@@ -15,6 +15,12 @@ export default function Contact() {
   const formRef = useRef<HTMLFormElement>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [formStatus, setFormStatus] = useState<"idle" | "submitting" | "success" | "error">("idle")
+  const [currentUrl, setCurrentUrl] = useState<string>("")
+
+  // Set the current URL after component mounts (client-side only)
+  useEffect(() => {
+    setCurrentUrl(window.location.href)
+  }, [])
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -24,7 +30,7 @@ export default function Contact() {
     try {
       const formData = new FormData(e.currentTarget)
 
-      // FormSubmit.co endpoint - replace your.email@example.com with your actual email
+      // FormSubmit.co endpoint
       const response = await fetch("https://formsubmit.co/jayachandragundeboina@gmail.com", {
         method: "POST",
         body: formData,
@@ -32,8 +38,6 @@ export default function Contact() {
           Accept: "application/json",
         },
       })
-
-      const data = await response.json()
 
       if (response.ok) {
         setFormStatus("success")
@@ -45,6 +49,7 @@ export default function Contact() {
         // Reset the form
         formRef.current?.reset()
       } else {
+        const data = await response.json().catch(() => ({}))
         throw new Error(data.message || "Failed to send message")
       }
     } catch (error) {
@@ -98,10 +103,12 @@ export default function Contact() {
                 >
                   {/* FormSubmit configuration fields */}
                   <input type="hidden" name="_captcha" value="false" />
-                  <input type="hidden" name="_next" value={window.location.href} />
                   <input type="hidden" name="_subject" value="New contact form submission" />
                   <input type="text" name="_honey" style={{ display: "none" }} />
                   <input type="hidden" name="_template" value="table" />
+
+                  {/* Only add the _next field if we have a currentUrl (client-side) */}
+                  {currentUrl && <input type="hidden" name="_next" value={currentUrl} />}
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>

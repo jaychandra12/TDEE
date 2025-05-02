@@ -1,4 +1,4 @@
-import { ExternalLinkIcon, GithubIcon } from "lucide-react"
+import { GithubIcon } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import Image from "next/image"
@@ -6,24 +6,11 @@ import Image from "next/image"
 export default function Projects() {
   const projects = [
     {
-      title: "E-Commerce Platform with Microservices Architecture",
+      title: "SneakerSpot - E-Commerce Platform",
       description:
-        "Built a scalable E-Commerce Platform using microservices architecture and the MERN stack. Designed and implemented RESTful APIs and GraphQL endpoints to handle product listings, user authentication, and payment processing. Migrated from a monolithic architecture to microservices, improving system flexibility and fault tolerance.",
-      technologies: [
-        "React",
-        "Node.js",
-        "MongoDB",
-        "PostgreSQL",
-        "GraphQL",
-        "AWS",
-        "Docker",
-        "Kubernetes",
-        "JWT",
-        "Redux",
-        "Material UI",
-      ],
-      demoUrl: "https://example.com/demo1",
-      githubUrl: "https://github.com/example/project1",
+        "Built a scalable E-Commerce Platform for sneaker enthusiasts using the MERN stack. Designed and implemented RESTful APIs to handle product listings, user authentication, and payment processing. Features include product search, filtering, shopping cart, and secure checkout process.",
+      technologies: ["React", "Node.js", "MongoDB", "Express", "JWT", "Redux", "Material UI", "Stripe API"],
+      githubUrl: "https://github.com/jaychandra12/ecommerce-website-/tree/main/SneakerSpot",
       image: "/placeholder.svg?height=600&width=800",
     },
     {
@@ -42,59 +29,26 @@ export default function Projects() {
         "Slack API",
         "WhatsApp API",
       ],
-      demoUrl: "https://example.com/demo2",
-      githubUrl: "https://github.com/example/project2",
+      githubUrl: "https://github.com/jaychandra12/CustomerSupportGenius/tree/main/CustomerSupportGenius",
       image: "/placeholder.svg?height=600&width=800",
     },
     {
-      title: "Task Management Application with Kanban Board",
+      title: "Health Tracker",
       description:
-        "Created a Task Management Application with a Kanban board interface using the MERN stack and TypeScript. Implemented features like task creation, drag-and-drop functionality, and real-time updates using WebSockets. Designed a RESTful API for task management and used MongoDB for storing task data.",
+        "Created a comprehensive Health Tracker application that allows users to monitor their nutrition intake, set dietary goals, and track their progress over time. Features include meal logging, nutritional analysis, personalized recommendations, and progress visualization through interactive charts.",
       technologies: [
         "React",
         "TypeScript",
         "Node.js",
         "MongoDB",
-        "WebSockets",
+        "Express",
         "Redux",
-        "Material UI",
+        "Chart.js",
         "JWT",
         "OAuth",
         "Vercel",
-        "GitHub Actions",
       ],
-      demoUrl: "https://example.com/demo3",
-      githubUrl: "https://github.com/example/project3",
-      image: "/placeholder.svg?height=600&width=800",
-    },
-    {
-      title: "Social Media Dashboard with Analytics",
-      description:
-        "Built a Social Media Dashboard for analyzing user engagement and performance metrics across multiple platforms. Used React.js and Next.js for the front-end, and Node.js with Express.js for the back-end. Integrated RESTful APIs to fetch data from platforms like Twitter, Facebook, and Instagram.",
-      technologies: [
-        "React",
-        "Next.js",
-        "Node.js",
-        "Express",
-        "PostgreSQL",
-        "Chart.js",
-        "D3.js",
-        "JWT",
-        "Docker",
-        "Google Cloud",
-        "RESTful APIs",
-      ],
-      demoUrl: "https://example.com/demo4",
-      githubUrl: "https://github.com/example/project4",
-      image: "/placeholder.svg?height=600&width=800",
-    },
-    {
-      title: "Research Data Visualization Tool",
-      description:
-        "A comprehensive data visualization platform built for research purposes, enabling researchers to analyze and visualize complex datasets through interactive charts and graphs. Implemented advanced filtering and data processing capabilities for scientific research applications.",
-      technologies: ["React", "Node.js", "MongoDB", "Next.js", "D3.js", "AI", "Python", "Data Processing"],
-      demoUrl: "https://example.com/demo5",
-      githubUrl: "https://github.com/example/project5",
+      githubUrl: "https://github.com/jaychandra12/Nutrition-Tracker/tree/main/Nutrition%20Tracker",
       image: "/placeholder.svg?height=600&width=800",
     },
   ]
@@ -127,17 +81,11 @@ export default function Projects() {
                 <div className="project-card-overlay rounded-lg">
                   <h3 className="text-xl font-semibold text-white mb-2">{project.title}</h3>
                   <p className="text-white/90 text-sm mb-4 text-center line-clamp-4">{project.description}</p>
-                  <div className="flex gap-3">
-                    <Link href={project.demoUrl} target="_blank" rel="noopener noreferrer">
-                      <Button variant="secondary" size="sm" className="gap-1">
-                        <ExternalLinkIcon className="h-4 w-4" />
-                        Demo
-                      </Button>
-                    </Link>
+                  <div className="flex justify-center">
                     <Link href={project.githubUrl} target="_blank" rel="noopener noreferrer">
                       <Button variant="secondary" size="sm" className="gap-1">
                         <GithubIcon className="h-4 w-4" />
-                        Code
+                        View Code
                       </Button>
                     </Link>
                   </div>

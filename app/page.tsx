@@ -6,7 +6,6 @@ import Experience from "@/components/experience"
 import Projects from "@/components/projects"
 import Education from "@/components/education"
 import Contact from "@/components/contact"
-import Testimonials from "@/components/testimonials"
 
 export const metadata: Metadata = {
   title: "Jaya Chandra Gundeboina | Full Stack Developer",
@@ -22,7 +21,6 @@ export default function Home() {
       <Experience />
       <Projects />
       <Education />
-      <Testimonials />
       <Contact />
     </main>
   )

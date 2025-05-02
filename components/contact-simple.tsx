@@ -177,7 +177,7 @@ export default function Contact() {
                 <GithubIcon className="h-6 w-6 text-primary" />
               </a>
               <a
-                href="https://linkedin.com"
+                href="https://www.linkedin.com/in/jaychandra12/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="bg-gradient-to-br from-primary/20 to-accent/20 p-3 rounded-full hover:from-primary/30 hover:to-accent/30 transition-colors"
